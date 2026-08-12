@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Monitor ChatGPT Codex rate limits and send meaningful changes to Telegram.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
