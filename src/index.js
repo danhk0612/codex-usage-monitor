@@ -68,7 +68,6 @@ export async function runCycle() {
     return;
   }
 
-  if (!current.fiveHour) log('WARN', '5-hour Codex rate-limit window is unavailable');
   if (!current.weekly) log('WARN', 'Weekly Codex rate-limit window is unavailable');
 
   const { events, nextState } = compareUsage(state, current);
