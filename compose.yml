@@ -1,0 +1,17 @@
+services:
+  codex-usage-monitor:
+    build:
+      context: .
+      args:
+        CODEX_VERSION: ${CODEX_VERSION:-0.147.0}
+    container_name: codex-usage-monitor
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Seoul}
+      CHECK_INTERVAL_SECONDS: ${CHECK_INTERVAL_SECONDS:-1800}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      CODEX_HOME: /root/.codex
+    volumes:
+      - ./codex-data:/root/.codex
+      - ./data:/app/data

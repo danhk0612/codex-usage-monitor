@@ -1,0 +1,9 @@
+.git
+.github
+.env
+codex-data
+data/state.json
+data/state.json.tmp
+node_modules
+test
+npm-debug.log*
