@@ -1,9 +1,6 @@
 services:
   codex-usage-monitor:
-    build:
-      context: .
-      args:
-        CODEX_VERSION: ${CODEX_VERSION:-0.147.0}
+    image: ghcr.io/danhk0612/codex-usage-monitor:${IMAGE_TAG:-latest}
     container_name: codex-usage-monitor
     restart: unless-stopped
     environment:
