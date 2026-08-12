@@ -1,16 +1,21 @@
-function formatDateTime(iso, timeZone, includeDate = true) {
+function formatDateTime(iso, timeZone) {
   if (!iso) return '확인 불가';
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return '확인 불가';
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  const parts = new Intl.DateTimeFormat('ko-KR', {
     timeZone,
-    month: includeDate ? '2-digit' : undefined,
-    day: includeDate ? '2-digit' : undefined,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
+    second: '2-digit',
     hour12: false,
-  }).format(date);
+  }).formatToParts(date);
+
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}년 ${values.month}월 ${values.day}일 ${values.hour}시 ${values.minute}분 ${values.second}초`;
 }
 
 function windowName(window) {
@@ -18,7 +23,7 @@ function windowName(window) {
 }
 
 function windowLines(name, value, timeZone) {
-  if (!value) return [name, '사용량: 확인 불가', 'Reset: 확인 불가'];
+  if (!value) return [];
   return [
     name,
     `남음: ${Math.round(value.remainingPercent)}%`,
@@ -26,14 +31,21 @@ function windowLines(name, value, timeZone) {
   ];
 }
 
+function joinWindowSections(sections) {
+  return sections.filter((section) => section.length > 0).flatMap((section, index) =>
+    index === 0 ? section : ['', ...section],
+  );
+}
+
 export function formatTelegramEvent(event, { timeZone = 'Asia/Seoul' } = {}) {
   if (event.type === 'initial') {
     return [
       '[Codex Usage]',
       '',
-      ...windowLines('5시간 한도', event.current.fiveHour, timeZone),
-      '',
-      ...windowLines('주간 한도', event.current.weekly, timeZone),
+      ...joinWindowSections([
+        windowLines('5시간 한도', event.current.fiveHour, timeZone),
+        windowLines('주간 한도', event.current.weekly, timeZone),
+      ]),
       '',
       `확인: ${formatDateTime(event.current.checkedAt, timeZone)}`,
     ].join('\n');
@@ -69,9 +81,10 @@ export function formatTelegramEvent(event, { timeZone = 'Asia/Seoul' } = {}) {
       '',
       'Codex 사용 제한 상태가 해제되었습니다.',
       '',
-      ...windowLines('5시간 한도', event.current.fiveHour, timeZone),
-      '',
-      ...windowLines('주간 한도', event.current.weekly, timeZone),
+      ...joinWindowSections([
+        windowLines('5시간 한도', event.current.fiveHour, timeZone),
+        windowLines('주간 한도', event.current.weekly, timeZone),
+      ]),
     ].join('\n');
   }
 
