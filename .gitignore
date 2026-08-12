@@ -1,0 +1,6 @@
+.env
+codex-data/
+data/state.json
+data/state.json.tmp
+node_modules/
+npm-debug.log*
