@@ -90,6 +90,18 @@ export function compareUsage(state, current) {
       previousReason: previous.rateLimitReachedType,
       current,
     });
+
+    for (const key of ['fiveHour', 'weekly']) {
+      const previousRemaining = previous[key]?.remainingPercent;
+      const currentRemaining = current[key]?.remainingPercent;
+      if (
+        Number.isFinite(previousRemaining)
+        && Number.isFinite(currentRemaining)
+        && currentRemaining > previousRemaining
+      ) {
+        next.notifiedThresholds[key] = thresholdSetForCurrent(currentRemaining);
+      }
+    }
   }
 
   for (const [key, label] of [
